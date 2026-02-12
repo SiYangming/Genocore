@@ -1,15 +1,15 @@
 calc_maf <- function(x)
 {
-    nr <- nrow(x)     
-    nc <- ncol(x)     
-    
-    x[(x!=0) & (x!=1) & (x!=2)] <- NA
     x <- as.matrix(x)
     
-    ## calc_n
-    n0 <- apply(x == 0, 1, sum,na.rm=T)
-    n1 <- apply(x == 1, 1, sum,na.rm=T)
-    n2 <- apply(x == 2, 1, sum,na.rm=T)
+    # Optimize: Vectorized replacement of invalid values
+    # Keep only 0, 1, 2; set others to NA
+    x[!x %in% c(0, 1, 2)] <- NA
+    
+    ## calc_n using vectorized rowSums (much faster than apply)
+    n0 <- rowSums(x == 0, na.rm = TRUE)
+    n1 <- rowSums(x == 1, na.rm = TRUE)
+    n2 <- rowSums(x == 2, na.rm = TRUE)
     
     n <- n0 + n1 + n2
     

@@ -3,10 +3,11 @@
 ## lovemun@kribb.re.kr
 
 source("https://gist.githubusercontent.com/SiYangming/83a14a28994d54789b19bff923c53938/raw/33af46fa76217493626ea8fb3c4db7987c0f8f5d/pkgs_in.R")
-pkgs_in("argparse")
+pkgs_in(c("argparse", "data.table"))
 source("https://gist.githubusercontent.com/SiYangming/7eb5c15a44e726839d383973559f6591/raw/81570aa4437af96fbe29c4dfa82953c71326eac0/thisPath.R")
 
 suppressPackageStartupMessages(library("argparse"))
+suppressPackageStartupMessages(library("data.table"))
 
 parser <- ArgumentParser()
 parser$add_argument("file", nargs=1, help="Input txt file")
@@ -30,9 +31,9 @@ source(file.path(thisPath, "genocore.R"))
 
 
 if (grepl("csv", file)){
-    tdata <- read.csv(file, header=T, check.names=F)
+    tdata <- fread(file, header=TRUE, sep=",", check.names=FALSE, data.table=FALSE)
 } else {
-    tdata <- read.table(file, header = T, sep='\t', check.names = F)
+    tdata <- fread(file, header=TRUE, sep="\t", check.names=FALSE, data.table=FALSE)
 }
 data.set <- tdata[,-1]
 rownames(data.set) <- tdata[,1]
