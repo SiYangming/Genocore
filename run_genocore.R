@@ -2,9 +2,10 @@
 ## Made by Seongmun Jeong
 ## lovemun@kribb.re.kr
 
-if("argparse" %in% rownames(installed.packages()) == FALSE){
-    install.packages("argparse")
-}
+source("https://gist.githubusercontent.com/SiYangming/83a14a28994d54789b19bff923c53938/raw/33af46fa76217493626ea8fb3c4db7987c0f8f5d/pkgs_in.R")
+pkgs_in("argparse")
+source("https://gist.githubusercontent.com/SiYangming/7eb5c15a44e726839d383973559f6591/raw/81570aa4437af96fbe29c4dfa82953c71326eac0/thisPath.R")
+
 suppressPackageStartupMessages(library("argparse"))
 
 parser <- ArgumentParser()
@@ -25,7 +26,7 @@ delta <- args$delta
 pfile <- args$predefined
 output <- args$output
 maf <- args$maf
-source("genocore.R")
+source(file.path(thisPath, "genocore.R"))
 
 
 if (grepl("csv", file)){
@@ -43,7 +44,7 @@ if (pfile != "NN"){
     preset <- NULL
 }
 if (maf != 0){
-    source("/data/lovemun/src_packages/GenoCore/calc_maf.R")
+    source(file.path(thisPath, "calc_maf.R"))
     cm <- calc_maf(data.set)
     rm.ix <- which(cm$maf < maf)
     write(rownames(data.set)[rm.ix], file = paste0(output, "Remove_markers.txt"))
