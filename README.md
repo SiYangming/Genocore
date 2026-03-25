@@ -17,7 +17,7 @@ git clone https://github.com/lovemun/Genocore
 cd Genocore
 
 $ Rscript run_genocore.R wheat_subset.csv -cv 99 -d 0.001 -o example &
-
+```
 ## --keep-all
 
 默认情况下，程序会在满足以下任一条件时提前停止：
