@@ -11,9 +11,10 @@ Genocore is available at https://github.com/lovemun/Genocore. Source code was wr
 
 ## Example
 
-$ git clone https://github.com/lovemun/Genocore
+```shell
+git clone https://github.com/lovemun/Genocore
 
-$ cd Genocore
+cd Genocore
 
 $ Rscript run_genocore.R wheat_subset.csv -cv 99 -d 0.001 -o example &
 
