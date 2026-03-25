@@ -1,4 +1,4 @@
-core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001, 
+core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001, keep_all = FALSE,
                        coverage_filename = "Coverage.csv",
                        Temp_file = "Temp.csv",
                        Coreset = "Coreset.csv"){
@@ -115,7 +115,7 @@ core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001,
         
         # 1. Count non-NAs per sample
         not.na.counts <- colSums(!is.na(counts))
-        if(max(not.na.counts) == 0) break # No more data
+        if(max(not.na.counts) == 0 && !keep_all) break
         
         # 2. Candidates
         candidate <- which(not.na.counts == max(not.na.counts))
@@ -129,6 +129,10 @@ core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001,
         # So yes, use all current 'counts' columns.
         
         step0 <- apply(counts, 1, overlap.score)
+        if (is.null(dim(step0))) {
+            step0 <- matrix(step0, nrow = 1)
+            rownames(step0) <- colnames(counts)
+        }
         
         # 4. Mean Overlap
         # step0 is (Samples x Markers)
@@ -160,13 +164,12 @@ core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001,
         
         # 5. Select Best
         select_in_candidate <- which(overlap == max(overlap))
-        
         final.rel.idx <- 0
-        
-        if (length(select_in_candidate) == 1){
+        if (length(select_in_candidate) == 0){
+            final.rel.idx <- candidate[1]
+        } else if (length(select_in_candidate) == 1){
             final.rel.idx <- candidate[select_in_candidate]
         } else {
-            # Tie breaking using min var.num
             minvals <- numeric(length(select_in_candidate))
             for(i in seq_along(select_in_candidate)){
                 s_idx <- candidate[select_in_candidate[i]]
@@ -258,7 +261,7 @@ core.set <- function(data.set, preset = NULL, coverage = 99, delta = 0.001,
             write.csv(coverage.table, file = Temp_file, quote = FALSE)
         }
 
-        if(coverage1 >= coverage | dy < delta){
+        if(!keep_all && (coverage1 >= coverage | dy < delta)){
             break
         }
         

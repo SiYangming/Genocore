@@ -2,6 +2,8 @@
 ## Made by Seongmun Jeong
 ## lovemun@kribb.re.kr
 
+options(timeout = 300)
+
 source("https://gist.githubusercontent.com/SiYangming/83a14a28994d54789b19bff923c53938/raw/33af46fa76217493626ea8fb3c4db7987c0f8f5d/pkgs_in.R")
 pkgs_in(c("argparse", "data.table"))
 source("https://gist.githubusercontent.com/SiYangming/7eb5c15a44e726839d383973559f6591/raw/81570aa4437af96fbe29c4dfa82953c71326eac0/thisPath.R")
@@ -19,6 +21,8 @@ parser$add_argument("-d", "--delta", default=0.001,
 parser$add_argument("-o", "--output", default="Run",
     help = "output name")
 parser$add_argument("-m", "--maf", default = 0, help = "Remove Minor allele frequency")
+parser$add_argument("--keep-all", action = "store_true", help = "Keep ranking all samples without early stopping")
+parser$add_argument("--seed", type = "integer", default = NULL, help = "Random seed for reproducible tie-breaking")
 
 args <- parser$parse_args()
 file <- args$file
@@ -29,6 +33,9 @@ output <- args$output
 maf <- args$maf
 source(file.path(thisPath, "genocore.R"))
 
+if (!is.null(args$seed)){
+    set.seed(args$seed)
+}
 
 if (grepl("csv", file)){
     tdata <- fread(file, header=TRUE, sep=",", check.names=FALSE, data.table=FALSE)
@@ -56,4 +63,4 @@ if (maf != 0){
 Temp_file = paste0(output, "_Temp.csv")
 Cover_file = paste0(output, "_Coverage.csv")
 Coreset_file = paste0(output, "_Coreset.csv")
-core.set(data.set, preset = preset, coverage = cv, delta = delta, Temp_file = Temp_file, coverage_filename = Cover_file, Coreset = Coreset_file)
+core.set(data.set, preset = preset, coverage = cv, delta = delta, keep_all = args$keep_all, Temp_file = Temp_file, coverage_filename = Cover_file, Coreset = Coreset_file)
